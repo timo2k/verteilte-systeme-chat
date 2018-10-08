@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,13 +18,14 @@ public class Chat extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private InputListener inputListener;
+	private NetworkListener networkListener;
 	private String nick;
 
 	public Chat() {
 		JPanel mainPanel;
 		
 		setTitle("Chat Tool v0.1");
-		setSize(800, 600);
+		setSize(900, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		nick = retrieveNickName();
@@ -39,17 +41,14 @@ public class Chat extends JFrame {
 		JTextArea textArea = new JTextArea();
 		final JTextField textField = new JTextField();
 		JButton sendButton = new JButton("Send");
+		this.getRootPane().setDefaultButton(sendButton);
 				
 		textField.setColumns(60);
 		
-		sendButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				inputListener.inputReceived(textField.getText());
-				textField.setText("");
-			}
-			
+		sendButton.addActionListener(e -> {
+			inputListener.inputReceived(textField.getText());
+			networkListener.messageReceived(textField.getText());
+			textField.setText("");
 		});
 		
 		textArea.setBackground(Color.LIGHT_GRAY);
@@ -64,7 +63,7 @@ public class Chat extends JFrame {
 		panel.add(southPanel, BorderLayout.SOUTH);
 		
 		// this is just an example, please modify for your listeners accordingly...
-		inputListener = new KeyboardListener(textArea, nick);
+		inputListener = new LocalKeybordListener(textArea, nick);
 		
 		return panel;
 	}
@@ -74,7 +73,13 @@ public class Chat extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new Chat();
+		ArrayList<NetworkListener> oberserver = new ArrayList<NetworkListener>();
+		Chat chat1 = new Chat();
+		Chat chat2 = new Chat();
+
+		oberserver.add(chat1.networkListener);
+		oberserver.add(chat2.networkListener);
+
 	}
 
 }
