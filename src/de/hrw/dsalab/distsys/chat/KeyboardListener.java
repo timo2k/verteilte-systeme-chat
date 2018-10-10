@@ -6,6 +6,7 @@ public class KeyboardListener implements InputListener {
 
 	private JTextArea textArea;
 	private String nick;
+	private Chat chat;
 	
 	public KeyboardListener(JTextArea textArea, String nick) {
 		this.textArea = textArea;

@@ -47,7 +47,6 @@ public class Chat extends JFrame {
 		
 		sendButton.addActionListener(e -> {
 			inputListener.inputReceived(textField.getText());
-			networkListener.messageReceived(textField.getText());
 			textField.setText("");
 		});
 		
@@ -73,12 +72,12 @@ public class Chat extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		ArrayList<NetworkListener> oberserver = new ArrayList<NetworkListener>();
+		ArrayList<Chat> chats = new ArrayList<Chat>();
 		Chat chat1 = new Chat();
 		Chat chat2 = new Chat();
 
-		oberserver.add(chat1.networkListener);
-		oberserver.add(chat2.networkListener);
+		chats.add(chat1);
+		chats.add(chat2);
 
 	}
 
