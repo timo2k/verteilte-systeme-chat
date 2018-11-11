@@ -34,6 +34,7 @@ public class SocketThread implements Runnable {
             this.write("NICK", this.nick);
             this.write("USER", this.nick + " 0 * :" + this.nick);
 
+            //höö
             while(this.in.hasNext()) {
                 String serverMessage = this.in.nextLine();
                 System.out.println("<<< " + serverMessage);
