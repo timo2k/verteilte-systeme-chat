@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -42,14 +45,9 @@ public class Chat extends JFrame {
 				
 		textField.setColumns(60);
 		
-		sendButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				inputListener.inputReceived(textField.getText());
-				textField.setText("");
-			}
-			
+		sendButton.addActionListener(e -> {
+			inputListener.inputReceived(textField.getText());
+			textField.setText("");
 		});
 		
 		textArea.setBackground(Color.LIGHT_GRAY);
@@ -74,7 +72,35 @@ public class Chat extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new Chat();
+		// new Chat();
+
+		String hostname = "10.2.237.187";
+		int port = 6666;
+
+		try (Socket socket = new Socket(hostname, port)) {
+
+			OutputStream output = socket.getOutputStream();
+			PrintWriter writer = new PrintWriter(output, true);
+
+			String text;
+
+			do {
+				text = "msg:<Timo> Bei Bernd!";
+				writer.println(text);
+
+				InputStream input = socket.getInputStream();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
+				String textFromServer = reader.readLine();
+
+				System.out.println(textFromServer);
+			} while(false);
+
+		} catch(UnknownHostException e) {
+			System.out.println(e);
+		} catch(IOException e) {
+			System.out.println(e);
+		}
 	}
 
 }
