@@ -21,9 +21,6 @@ public class Chat extends JFrame {
 	private InputListener inputListener;
 	private NetworkListener networkListener;
 	private String nick;
-	private String hostname = "penguin.omega.example.org";
-	private PrintWriter out;
-	private Scanner in;
 
 	public Chat() {
 		JPanel mainPanel;
@@ -37,35 +34,6 @@ public class Chat extends JFrame {
 		getContentPane().add(mainPanel);
 		getContentPane().getParent().invalidate();
 		getContentPane().validate();
-
-		try {
-			Socket socket = new Socket("172.16.5.130", 6667);
-
-			this.out = new PrintWriter(socket.getOutputStream(), true);
-			this.in = new Scanner(socket.getInputStream());
-
-			this.write("NICK", this.nick);
-			this.write("USER", this.nick + " 0 * :" + this.nick);
-
-			while(this.in.hasNext()) {
-				String serverMessage = this.in.nextLine();
-				System.out.println("<<< " + serverMessage);
-
-				if(serverMessage.startsWith(":" + this.hostname + " 266")) {
-					write("JOIN", "#pimmler");
-					write("PRIVMSG #pimmler", ":Na Ihr Fotzen");
-				}
-			}
-
-			in.close();
-			out.close();
-			socket.close();
-
-			System.out.println("Done!");
-
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	private JPanel setupChatView() {
@@ -104,14 +72,8 @@ public class Chat extends JFrame {
 		return (String)JOptionPane.showInputDialog(this, "Enter your nickname please:", "Enter nickname", JOptionPane.QUESTION_MESSAGE);
 	}
 
-	private void write(String command, String message) {
-		String fullMessage = command + " " + message;
-		System.out.println(">>> " + fullMessage);
-		this.out.print(fullMessage + "\r\n");
-		this.out.flush();
-	}
-
 	public static void main(String[] args) {
+		new Thread(new SocketThread("Koter")).start();
 		new Chat();
 
 	}
