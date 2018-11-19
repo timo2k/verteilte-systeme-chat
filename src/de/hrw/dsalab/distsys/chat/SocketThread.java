@@ -3,7 +3,6 @@ package de.hrw.dsalab.distsys.chat;
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.LinkedList;
 import java.util.Scanner;
 
 public class SocketThread implements Runnable {
@@ -34,21 +33,30 @@ public class SocketThread implements Runnable {
 
     @Override
     public void run() {
-            System.out.println("GEHT=");
         try {
             this.write("NICK", this.nick);
             this.write("USER", this.nick + " 0 * :" + this.nick);
 
             while(this.input.hasNext()) {
                 String serverMessage = this.input.nextLine();
-                System.out.println("<<< " + serverMessage);
-                //TODO: Filter and format the chat Message
-                networkListener.messageReceived("<<< " + serverMessage);
 
-                //TODO: Implement a PING Check
+                // Debugging console stuff
+                System.out.println("<<< " + serverMessage);
+
+                if (serverMessage.contains("PRIVMSG")) {
+                    String userName = "<" + serverMessage.substring(serverMessage.indexOf(":") + 1, serverMessage.indexOf("!")) + ">";
+                    String message = serverMessage.substring(serverMessage.indexOf(":", serverMessage.indexOf(":") + 1) + 1);
+                    networkListener.messageReceived(userName + " " + message);
+                }
+
+                if (serverMessage.startsWith("PING")) {
+                    String pingContents = serverMessage.split(" ", 2)[1];
+                    this.write("PONG", pingContents);
+                }
+
                 if(serverMessage.startsWith(":" + this.hostname + " 266")) {
                     write("JOIN", "#pimmler");
-                    write("PRIVMSG #pimmler", ":Na Ihr Fotzen");
+                    networkListener.messageReceived("<<< Läuft! Jetzt kannste los chatten!");
                 }
             }
 

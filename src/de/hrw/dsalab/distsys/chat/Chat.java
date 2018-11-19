@@ -79,9 +79,11 @@ public class Chat extends JFrame {
 		southPanel.add(textField);
 		southPanel.add(sendButton);
 
-		//TODO: Scrollpane
+		JScrollPane scroll = new JScrollPane(textArea);
+		scroll.setAutoscrolls(true);
+
 		panel.setLayout(new BorderLayout());
-		panel.add(textArea, BorderLayout.CENTER);
+		panel.add(scroll, BorderLayout.CENTER);
 		panel.add(southPanel, BorderLayout.SOUTH);
 		
 		// this is just an example, please modify for your listeners accordingly...
@@ -103,6 +105,7 @@ public class Chat extends JFrame {
 		return (String)JOptionPane.showInputDialog(this, "Enter your nickname please:", "Enter nickname", JOptionPane.QUESTION_MESSAGE);
 	}
 
+	//TODO Refactor Socket Stuff
 	/**
 	 * Returns a brand new Socket
 	 * @return Socket
