@@ -1,0 +1,7 @@
+<chat>
+    <server>172.16.5.130</server>
+    <hostname>penguin.omega.example.org</hostname>
+    <port>6667</port>
+    <channel>#schokolade</channel>
+    <default-language>de</default-language>
+</chat>

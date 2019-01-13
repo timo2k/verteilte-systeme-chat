@@ -7,7 +7,8 @@ import java.util.Scanner;
 
 public class SocketThread implements Runnable {
 
-    private String hostname = "penguin.omega.example.org";
+    private String hostname;
+    private String channel;
     private Socket socket;
     private String nick;
     private NetworkListener networkListener;
@@ -22,9 +23,11 @@ public class SocketThread implements Runnable {
      * @param socket the Socket Instance
      * @throws IOException
      */
-    public SocketThread(String nick, Socket socket) throws IOException {
+    public SocketThread(String nick, Socket socket, String hostname, String channel) throws IOException {
         this.nick = nick;
         this.socket = socket;
+        this.hostname = hostname;
+        this.channel = channel;
 
         this.input = new Scanner(this.socket.getInputStream());
         this.output = new PrintWriter(socket.getOutputStream(), true);
@@ -55,7 +58,7 @@ public class SocketThread implements Runnable {
                 }
 
                 if(serverMessage.startsWith(":" + this.hostname + " 266")) {
-                    write("JOIN", "#pimmler");
+                    write("JOIN", this.channel);
                     networkListener.messageReceived("<<< Läuft! Jetzt kannste los chatten!");
                 }
             }

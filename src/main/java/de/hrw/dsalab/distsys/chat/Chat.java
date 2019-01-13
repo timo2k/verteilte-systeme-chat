@@ -13,12 +13,16 @@ public class Chat extends JFrame {
 	private InputListener inputListener;
 	private NetworkListener networkListener;
 	private String nick;
+	ConfigParser config;
 
 	private Socket serverSocket;
 	private SocketThread serverListener;
 
+	private String server;
 	private String hostname;
 	private int port;
+	private String channel;
+	private String defaultLanguage;
 
 	private JTextArea textArea;
 
@@ -31,8 +35,13 @@ public class Chat extends JFrame {
 		setVisible(true);
 		nick = retrieveNickName();
 
-		this.hostname = "172.16.5.130";
-		this.port = 6667;
+
+		this.config = new ConfigParser();
+		this.server = config.getServer();
+		this.hostname = config.getHostname();
+		this.port = config.getPort();
+		this.channel = config.getChannel();
+		this.defaultLanguage = config.getDefaultLanguage();
 
 		// Do Socket Business
 		if ((serverSocket = this.retrieveSocket()) == null) {
@@ -40,7 +49,7 @@ public class Chat extends JFrame {
 			System.exit(0);
 		}
 		try {
-			this.serverListener = new SocketThread(this.nick, this.serverSocket);
+			this.serverListener = new SocketThread(this.nick, this.serverSocket, this.hostname, this.channel);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -87,8 +96,8 @@ public class Chat extends JFrame {
 		panel.add(southPanel, BorderLayout.SOUTH);
 		
 		// this is just an example, please modify for your listeners accordingly...
-		inputListener = new IrcInputListener(textArea, nick, serverListener);
-		networkListener = new IrcNetworkListener(this.nick, this.serverSocket, this.textArea);
+		inputListener = new IrcInputListener(textArea, nick, serverListener, this.channel);
+		networkListener = new IrcNetworkListener(this.nick, this.serverSocket, this.textArea, this.defaultLanguage);
 
 		// push the networklistener and textaera instance into the serverListener Thread befor it starts
 		serverListener.setNetworkListener(networkListener);
@@ -112,7 +121,7 @@ public class Chat extends JFrame {
 	 */
 	private Socket retrieveSocket() {
 		try {
-			Socket socket = new Socket(this.hostname, this.port);
+			Socket socket = new Socket(this.server, this.port);
 			return socket;
 		} catch (Exception e) {
 			e.printStackTrace();
